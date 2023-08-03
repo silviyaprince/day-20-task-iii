@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather Information</title>
+    <style>
+        body{
+            background-image: url('https://images.unsplash.com/photo-1528459584353-5297db1a9c01?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHBsYWlufGVufDB8fDB8fHww&w=1000&q=80');
+            
+            /* Set background image to cover the entire body */
+            background-size: cover;
+            /* Center the background image horizontally and vertically */
+            background-position: center center;
+            /* Set the background to fixed so it doesn't scroll with the content */
+            background-attachment: fixed;
+            /* Set default margin and padding for the body */
+            margin: 0;
+            padding: 0;
+        }
+        #weatherContainer{
+            font-size: 30px; /* Change the font size as per your requirement */
+      color: #0cbfec; 
+        }
+        #getWeatherBtn{
+            font-size: 20px;
+            color: #0cbfec;
+        }
+    </style>
+</head>
+<body>
+    <div id="weatherContainer">
+        <h1>Weather Information</h1>
+        <p>Loading...</p>
+        <label for="city">City:</label>
+        <input type="text" id="city" placeholder="Enter city name">
+        <label for="country">Country:</label>
+        <input type="text" id="country" placeholder="Enter country name (e.g., US)">
+        <button id="getWeatherBtn">Get Weather</button>
+    </div>
+
+    <script>
+        // Your JavaScript code goes here
+        const apiKey = '5c697a17965f20cb38456219bf568c26';
+        const weatherApiUrl = 'https://api.openweathermap.org/data/2.5/weather';
+
+        const weatherContainer = document.getElementById('weatherContainer');
+        const cityInput = document.getElementById('city');
+        const countryInput = document.getElementById('country');
+        const getWeatherBtn = document.getElementById('getWeatherBtn');
+
+        function fetchWeatherData() {
+            const city = cityInput.value;
+            const country = countryInput.value;
+
+            if (!city || !country) {
+                alert('Please enter both city and country.');
+                return;
+            }
+
+            const url = `${weatherApiUrl}?q=${city},${country}&appid=${apiKey}`;
+
+            // Show a loading message while fetching the data
+            weatherContainer.innerHTML = '<h1>Weather Information</h1><p>Loading...</p>';
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    // Assuming the data is fetched successfully and has the required information
+                    const weatherInfo = `
+                        <h1>${data.name}, ${data.sys.country}</h1>
+                        <p>Temperature: ${(data.main.temp - 273.15).toFixed(2)} °C</p>
+                        <p>Weather: ${data.weather[0].description}</p>
+                    `;
+                    weatherContainer.innerHTML = weatherInfo;
+                })
+                .catch(error => {
+                    console.error('Error fetching weather data:', error);
+                    weatherContainer.innerHTML = '<h1>Weather Information</h1><p>Failed to fetch weather data. Please try again later.</p>';
+                });
+        }
+
+        // Fetch weather data when the button is clicked
+        getWeatherBtn.addEventListener('click', fetchWeatherData);
+    </script>
+</body>
+</html>
